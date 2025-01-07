@@ -8,5 +8,4 @@ def main():
   htmlnode_trial = HTMLNode("p", "paragraph", [], {})
   print(htmlnode_trial.__repr__())
   
-  
 main()
