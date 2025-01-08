@@ -1,6 +1,13 @@
 import unittest
 from text_node import TextNode, TextType
-from inline_markdown import split_nodes_delimiter, extract_markdown_links, extract_markdown_images, split_nodes_link, split_nodes_images
+from inline_markdown import (
+  split_nodes_delimiter, 
+  extract_markdown_links, 
+  extract_markdown_images, 
+  split_nodes_link, 
+  split_nodes_images, 
+  text_to_text_node
+  )
 
 class TestInlineMarkdown(unittest.TestCase):
   def test_correct_split_normal_and_special(self):
@@ -211,6 +218,88 @@ class TestInlineMarkdown(unittest.TestCase):
     nodes = [TextNode("![Alt](https://example.com/image.png)", TextType.BOLD)]
     result = split_nodes_images(nodes)
     self.assertEqual(result, nodes)
+    
+  def test_plain_text(self):
+    text = "Hello world!"
+    result = text_to_text_node(text)
+    expected = [TextNode("Hello world!", TextType.NORMAL)]
+    self.assertEqual(result, expected)
+
+  def test_bold_text(self):
+    text = "This is **bold** text"
+    result = text_to_text_node(text)
+    expected = [
+      TextNode("This is ", TextType.NORMAL),
+      TextNode("bold", TextType.BOLD),
+      TextNode(" text", TextType.NORMAL)
+    ]
+    self.assertEqual(result, expected)
+
+  def test_italic_text(self):
+    text = "This is *italic* text"
+    result = text_to_text_node(text)
+    expected = [
+      TextNode("This is ", TextType.NORMAL),
+      TextNode("italic", TextType.ITALIC),
+      TextNode(" text", TextType.NORMAL)
+    ]
+    self.assertEqual(result, expected)
+
+  def test_code_block(self):
+    text = "This is a `code block`"
+    result = text_to_text_node(text)
+    expected = [
+      TextNode("This is a ", TextType.NORMAL),
+      TextNode("code block", TextType.CODE)
+    ]
+    self.assertEqual(result, expected)
+
+  def test_image(self):
+    text = "Here is an image ![Alt Text](https://example.com/image.png)"
+    result = text_to_text_node(text)
+    expected = [
+      TextNode("Here is an image ", TextType.NORMAL),
+      TextNode("Alt Text", TextType.IMAGES, "https://example.com/image.png")
+    ]
+    self.assertEqual(result, expected)
+
+  def test_link(self):
+    text = "Check this [link](https://example.com)"
+    result = text_to_text_node(text)
+    expected = [
+      TextNode("Check this ", TextType.NORMAL),
+      TextNode("link", TextType.LINKS, "https://example.com")
+    ]
+    self.assertEqual(result, expected)
+
+  def test_mixed_text(self):
+    text = "**Bold** and *italic* with a [link](https://example.com)"
+    result = text_to_text_node(text)
+    expected = [
+      TextNode("Bold", TextType.BOLD),
+      TextNode(" and ", TextType.NORMAL),
+      TextNode("italic", TextType.ITALIC),
+      TextNode(" with a ", TextType.NORMAL),
+      TextNode("link", TextType.LINKS, "https://example.com")
+    ]
+    self.assertEqual(result, expected)
+
+  def test_unbalanced_delimiters(self):
+    text = "This is **bold without closing"
+    with self.assertRaises(Exception) as context:
+        text_to_text_node(text)
+    self.assertEqual(str(context.exception), "Invalid MD: Matching closing delimiter(**) not found ")
+
+  def test_multiple_images(self):
+    text = "Images ![One](https://example.com/1.png) and ![Two](https://example.com/2.png)"
+    result = text_to_text_node(text)
+    expected = [
+      TextNode("Images ", TextType.NORMAL),
+      TextNode("One", TextType.IMAGES, "https://example.com/1.png"),
+      TextNode(" and ", TextType.NORMAL),
+      TextNode("Two", TextType.IMAGES, "https://example.com/2.png")
+    ]
+    self.assertEqual(result, expected)
     
 if __name__ == "__main__":
   unittest.main()
