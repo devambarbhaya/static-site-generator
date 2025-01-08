@@ -1,6 +1,6 @@
 import unittest
 from text_node import TextNode, TextType
-from inline_markdown import split_nodes_delimiter, extract_markdown_links, extract_markdown_images
+from inline_markdown import split_nodes_delimiter, extract_markdown_links, extract_markdown_images, split_nodes_link, split_nodes_images
 
 class TestInlineMarkdown(unittest.TestCase):
   def test_correct_split_normal_and_special(self):
@@ -157,6 +157,60 @@ class TestInlineMarkdown(unittest.TestCase):
       extract_markdown_images('![Alt text](https://example.com/image-@#&$%.png)'),
       [('Alt text', 'https://example.com/image-@#&$%.png')]
     )
+    
+  def test_split_nodes_image_single(self):
+    nodes = [TextNode("This is an image ![Alt Text](https://example.com/image.png)", TextType.NORMAL)]
+    result = split_nodes_images(nodes)
+    expected = [
+      TextNode("This is an image ", TextType.NORMAL),
+      TextNode("Alt Text", TextType.IMAGES, "https://example.com/image.png")
+    ]
+    self.assertEqual(result, expected)
+
+  def test_split_nodes_images_multiple(self):
+    nodes = [TextNode("Image1 ![One](https://example.com/1.png) Image2 ![Two](https://example.com/2.png)", TextType.NORMAL)]
+    result = split_nodes_images(nodes)
+    expected = [
+      TextNode("Image1 ", TextType.NORMAL),
+      TextNode("One", TextType.IMAGES, "https://example.com/1.png"),
+      TextNode(" Image2 ", TextType.NORMAL),
+      TextNode("Two", TextType.IMAGES, "https://example.com/2.png"),
+    ]
+    self.assertEqual(result, expected)
+
+  def test_split_nodes_link_single(self):
+    nodes = [TextNode("This is a [link](https://example.com)", TextType.NORMAL)]
+    result = split_nodes_link(nodes)
+    expected = [
+      TextNode("This is a ", TextType.NORMAL),
+      TextNode("link", TextType.LINKS, "https://example.com")
+    ]
+    self.assertEqual(result, expected)
+
+  def test_split_nodes_link_multiple(self):
+    nodes = [TextNode("[Google](https://google.com) and [Bing](https://bing.com)", TextType.NORMAL)]
+    result = split_nodes_link(nodes)
+    expected = [
+      TextNode("Google", TextType.LINKS, "https://google.com"),
+      TextNode(" and ", TextType.NORMAL),
+      TextNode("Bing", TextType.LINKS, "https://bing.com")
+    ]
+    self.assertEqual(result, expected)
+
+  def test_no_images(self):
+    nodes = [TextNode("No images here", TextType.NORMAL)]
+    result = split_nodes_images(nodes)
+    self.assertEqual(result, nodes)
+
+  def test_no_links(self):
+    nodes = [TextNode("No links here", TextType.NORMAL)]
+    result = split_nodes_link(nodes)
+    self.assertEqual(result, nodes)
+
+  def test_non_normal_nodes(self):
+    nodes = [TextNode("![Alt](https://example.com/image.png)", TextType.BOLD)]
+    result = split_nodes_images(nodes)
+    self.assertEqual(result, nodes)
     
 if __name__ == "__main__":
   unittest.main()
