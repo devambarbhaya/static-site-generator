@@ -1,6 +1,6 @@
 import unittest
-from textnode import TextNode, TextType
-from inlinemarkdown import split_nodes_delimiter, extract_markdown_links, extract_markdown_images
+from text_node import TextNode, TextType
+from inline_markdown import split_nodes_delimiter, extract_markdown_links, extract_markdown_images
 
 class TestInlineMarkdown(unittest.TestCase):
   def test_correct_split_normal_and_special(self):

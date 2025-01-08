@@ -1,5 +1,5 @@
 from enum import Enum
-from htmlnode import LeafNode
+from html_node import LeafNode
 class TextType(Enum):
   NORMAL = "normal"
   BOLD = "bold"
