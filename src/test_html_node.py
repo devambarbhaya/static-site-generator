@@ -11,7 +11,7 @@ class TestHTMLNode(unittest.TestCase):
     node = HTMLNode( "div", "I wish I could read",)
     self.assertEqual(node.tag,"div",)
     self.assertEqual(node.value,"I wish I could read",)
-    self.assertEqual(node.children,None,)
+    self.assertEqual(node.children,[],)
     self.assertEqual(node.props,None,)
 
   def test_repr(self):

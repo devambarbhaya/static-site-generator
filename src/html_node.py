@@ -2,11 +2,16 @@ class HTMLNode:
   def __init__(self, tag=None, value=None, children=None, props=None):
     self.tag = tag
     self.value = value
-    self.children = children
+    self.children = children if children else []
     self.props = props
     
   def to_html(self):
-    raise NotImplementedError("to_html is not implemented yet")
+    if self.value:
+      return f"<{self.tag}>{self.value}</{self.tag}>"
+    else:
+      # Convert children properly into HTML strings
+      children_html = ''.join(child.to_html() for child in self.children)
+      return f"<{self.tag}>{children_html}</{self.tag}>"
   
   def props_to_html(self):
     if not self.props:
