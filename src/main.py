@@ -1,28 +1,20 @@
 import os
 import shutil
-from text_node import TextNode, TextType
-from html_node import HTMLNode
 
-def copy_static(source, destination):
-  if os.path.exists(destination):
-    shutil.rmtree(destination)
-    print(f"Deleted existing destination: {destination}")
-    
-  os.makedirs(destination)
-  print(f"Created directory: {destination}")
-  
-  for item in os.listdir(source):
-    source_item = os.path.join(source, item)
-    destination_item = os.path.join(destination, item)
-    
-    if os.path.isfile(source_item):
-      shutil.copy(source_item, destination_item)
-      print(f"Copied file: {source_item} -> {destination_item}")
-    elif os.path.isdir(source_item):
-      shutil.copytree(source_item, destination_item)
-      print(f"Copied directory: {source_item} -> {destination_item}")
+from copy_static import copy_files_recursive
+
+
+dir_path_static = "./static"
+dir_path_public = "./public"
+
 
 def main():
-  copy_static("static", "public")
-  
+    print("Deleting public directory...")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
+
+    print("Copying static files to public directory...")
+    copy_files_recursive(dir_path_static, dir_path_public)
+
+
 main()
