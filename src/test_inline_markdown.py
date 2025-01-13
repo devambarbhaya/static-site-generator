@@ -8,7 +8,7 @@ from inline_markdown import (
     extract_markdown_images,
 )
 
-from text_node import TextNode, TextType
+from textnode import TextNode, TextType
 
 
 class TestInlineMarkdown(unittest.TestCase):

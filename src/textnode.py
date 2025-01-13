@@ -1,4 +1,4 @@
-from html_node import LeafNode
+from htmlnode import LeafNode
 from enum import Enum
 
 
