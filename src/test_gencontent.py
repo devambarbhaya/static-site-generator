@@ -27,9 +27,9 @@ this is a bunch
 
 of text
 
-* and
-* a
-* list
+- and
+- a
+- list
 """
         )
         self.assertEqual(actual, "title")

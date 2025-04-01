@@ -55,8 +55,8 @@ class TestInlineMarkdown(unittest.TestCase):
         )
 
     def test_delim_italic(self):
-        node = TextNode("This is text with an *italic* word", TextType.TEXT)
-        new_nodes = split_nodes_delimiter([node], "*", TextType.ITALIC)
+        node = TextNode("This is text with an _italic_ word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "_", TextType.ITALIC)
         self.assertListEqual(
             [
                 TextNode("This is text with an ", TextType.TEXT),
@@ -67,9 +67,9 @@ class TestInlineMarkdown(unittest.TestCase):
         )
 
     def test_delim_bold_and_italic(self):
-        node = TextNode("**bold** and *italic*", TextType.TEXT)
+        node = TextNode("**bold** and _italic_", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
-        new_nodes = split_nodes_delimiter(new_nodes, "*", TextType.ITALIC)
+        new_nodes = split_nodes_delimiter(new_nodes, "_", TextType.ITALIC)
         self.assertEqual(
             [
                 TextNode("bold", TextType.BOLD),
@@ -173,7 +173,7 @@ class TestInlineMarkdown(unittest.TestCase):
 
     def test_text_to_textnodes(self):
         nodes = text_to_textnodes(
-            "This is **text** with an *italic* word and a `code block` and an ![image](https://i.imgur.com/zjjcJKZ.png) and a [link](https://boot.dev)"
+            "This is **text** with an _italic_ word and a `code block` and an ![image](https://i.imgur.com/zjjcJKZ.png) and a [link](https://boot.dev)"
         )
         self.assertListEqual(
             [
